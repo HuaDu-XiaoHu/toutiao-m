@@ -75,3 +75,9 @@
 .iconfenxiang:before {
   content: "\e60a";
 }
+.app-nav-bar {
+  background-color: #3296fa !important;
+}
+.app-nav-bar .van-nav-bar__title {
+  color: #ffffff !important;
+}
