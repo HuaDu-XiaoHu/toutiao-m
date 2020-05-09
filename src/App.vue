@@ -1,13 +1,30 @@
 <template>
   <div id="app">
-    <h1>移动端头条</h1>
     <router-view />
+
   </div>
 </template>
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  components: {},
+  props: {},
+  data () {
+    return {
+      active: 0
+    }
+  },
+  computed: {},
+  watch: {},
+  created () { },
+  mounted () { },
+  methods: {}
 }
 </script>
 <style lang="less">
+.box {
+  width: 375px;
+  height: 100px;
+  background-color: pink;
+}
 </style>
