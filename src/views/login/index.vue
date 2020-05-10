@@ -5,7 +5,11 @@
                  title="注册/登录"
                  left-arrow
                  @click-left="$router.back()" />
-    <van-form @submit="onLogin">
+    <van-form @submit="onLogin"
+              :show-error="false"
+              :show-error-message="false"
+              validate-first
+              @failed="onFailed">
       <van-field v-model="user.mobile"
                  icon-prefix="toutiao"
                  left-icon="shouji"
@@ -63,10 +67,6 @@ export default {
   mounted () { },
   methods: {
     async onLogin () {
-      // 获取表单数据
-      // const user = this.user
-      // 表单验证
-      // Toast.loading({})
       this.$toast.loading({
         // 提示文本
         message: '登录中...',
@@ -75,11 +75,6 @@ export default {
         // 展示时长
         duration: 0
       })
-
-      // 1.找到数据接口
-      // 2.封装请求方法
-      // 3.请求调用登录
-      // 4.处理相应结果
       try {
         const res = await login(this.user)
         console.log(res)
@@ -88,6 +83,15 @@ export default {
         console.log(err)
         // console.log('登录失败', err)
         this.$toast.fail('登录失败, 手机号或验证码错误')
+      }
+    },
+    onFailed (error) {
+      // console.log('验证失败', error)
+      if (error.error[0]) {
+        this.$toast({
+          message: error.error[0].message,
+          position: 'top'
+        })
       }
     }
   }
