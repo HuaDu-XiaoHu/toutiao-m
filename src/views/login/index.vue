@@ -9,21 +9,33 @@
               :show-error="false"
               :show-error-message="false"
               validate-first
+              ref="login-form"
               @failed="onFailed">
       <van-field v-model="user.mobile"
                  icon-prefix="toutiao"
                  left-icon="shouji"
+                 center
+                 name="mobile"
                  :rules="formRules.mobile"
                  placeholder="请输入手机号" />
       <van-field v-model="user.code"
                  clearable
                  icon-prefix="toutiao"
                  left-icon="yanzhengma"
+                 center
+                 name="code"
                  :rules="formRules.code"
                  placeholder="请输入验证码">
         <template #button>
+          <van-count-down :time="1000*60"
+                          v-if="isCountDownShow"
+                          format="ss s"
+                          @finish="isCountDownShow=false" />
           <van-button size="mini"
+                      v-else
                       class="send-btn"
+                      :loading="isSendSmsloading"
+                      @click.prevent="onSendSms"
                       round>发送验证码</van-button>
         </template>
       </van-field>
@@ -38,7 +50,7 @@
 </template>
 
 <script>
-import { login } from '@/api/user'
+import { login, sendSms } from '@/api/user'
 // import { Toast } from 'vant'
 export default {
   name: 'LoginIndex',
@@ -47,18 +59,22 @@ export default {
   data () {
     return {
       user: {
-        mobile: '13911111111',
-        code: '246810'
+        mobile: '15612940247',
+        code: ''
       },
       formRules: {
         mobile: [
           { required: true, message: '手机号不能为空' },
-          { pattern: /^1[3|5|7|8]\d{9}$/, message: '手机号格式错误' }],
+          { pattern: /^1[3|5|7|8]\d{9}$/, message: '手机号格式错误' }
+        ],
         code: [
-          { required: true, message: '不能为验证码空' },
+          { required: true, message: '验证码不能为空' },
           { pattern: /^\d{6}$/, message: '验证码格式错误' }
         ]
-      }
+      },
+      // 倒计时和验证码显示状态
+      isCountDownShow: false,
+      isSendSmsloading: false
     }
   },
   computed: {},
@@ -86,13 +102,51 @@ export default {
       }
     },
     onFailed (error) {
-      // console.log('验证失败', error)
-      if (error.error[0]) {
+      console.log(error)
+      if (error.errors[0]) {
         this.$toast({
-          message: error.error[0].message,
+          message: error.errors[0].message,
           position: 'top'
         })
       }
+    },
+    async onSendSms () {
+      // console.log('onSendSms')
+      // 校验手机号是否格式正确
+      // 验证通过，请求发送验证码，显示倒计时
+      try {
+        // 校验手机号是否格式正确
+        await this.$refs['login-form'].validate('mobile')
+        // console.log(123)
+        // 点击发送验证码时显示loading状态
+        this.isSendSmsloading = true
+        // const res = await sendSms(this.user.mobile)
+        // console.log(123)
+        await sendSms(this.user.mobile)
+        // console.log(res)
+        // 点击发送验证码显示倒计时
+        this.isCountDownShow = true
+        // 倒计时结束重新显示发送按钮
+      } catch (err) {
+        // console.log(err)
+        let message = ''
+        if (err && err.response && err.response.status === 429) {
+          // 发送短信失败的错误
+          message = '发送太频繁了，请稍后重试'
+        } else if (err.name === 'mobile') {
+          // 失败错误提示
+          message = err.message
+        } else {
+          message = '发送失败，请稍后重试'
+        }
+        // 提示用户
+        this.$toast({
+          message,
+          position: 'top'
+        })
+      }
+      // 关闭loading状态
+      this.isSendSmsloading = false
     }
   }
 }
