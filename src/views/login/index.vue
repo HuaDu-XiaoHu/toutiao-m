@@ -152,6 +152,7 @@ export default {
     }
   }
 }
+// end
 </script>
 
 <style scoped lang="less">
