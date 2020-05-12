@@ -14,7 +14,7 @@
                    src="https://img.yzcdn.cn/vant/cat.jpeg" />
 
         <div slot="title"
-             class="name">昵称</div>
+             class="name">{{currentUser.name}}</div>
         <van-button size="small"
                     class="update-btn"
                     round>编辑资料</van-button>
@@ -24,28 +24,28 @@
         <van-grid-item class="data-info-item">
           <div slot="text"
                class="text-warp">
-            <div class="count">123</div>
+            <div class="count">{{currentUser.art_count}}</div>
             <div class="text">头条</div>
           </div>
         </van-grid-item>
         <van-grid-item class="data-info-item">
           <div slot="text"
                class="text-warp">
-            <div class="count">123</div>
+            <div class="count">{{currentUser.follow_count}}</div>
             <div class="text">关注</div>
           </div>
         </van-grid-item>
         <van-grid-item class="data-info-item">
           <div slot="text"
                class="text-warp">
-            <div class="count">123</div>
+            <div class="count">{{currentUser.fans_count}}</div>
             <div class="text">粉丝</div>
           </div>
         </van-grid-item>
         <van-grid-item class="data-info-item">
           <div slot="text"
                class="text-warp">
-            <div class="count">123</div>
+            <div class="count">{{currentUser.like_count}}</div>
             <div class="text">获赞</div>
           </div>
         </van-grid-item>
@@ -54,7 +54,7 @@
     </van-cell-group>
     <div v-else
          class="not-login">
-      <div @click="$router.push('./login')"><img src="./shouji.png"
+      <div @click="$router.push('./login')"><img :src="currentUser.photo"
              class="mobile"></div>
 
       <div class="text">登录/注册</div>
@@ -87,21 +87,27 @@
 
 <script>
 import { mapState } from 'vuex'
+import { getCurrentUser } from '@/api/user'
 export default {
   name: 'MyIndex',
   components: {},
   props: {},
   data () {
     return {
+      // 当前用户登录的信息
+      currentUser: {}
     }
   },
   computed: {
     ...mapState(['user'])
   },
   watch: {},
-  created () { },
+  created () {
+    this.loadCurrentUser()
+  },
   mounted () { },
   methods: {
+
     onLogout () {
       // 提示是否要退出
       this.$dialog.confirm({
@@ -117,6 +123,11 @@ export default {
         .catch(() => {
           // on cancel
         })
+    },
+    async loadCurrentUser () {
+      const { data } = await getCurrentUser()
+      // console.log(data)
+      this.currentUser = data.data
     }
   }
 }
@@ -187,26 +198,26 @@ export default {
     .mobile {
       height: 66px;
       width: 66px;
-      .text {
-        font-size: 14px;
-        color: #fff;
-      }
     }
-    /deep/ .nav-grid {
-      .nav-grid-item {
-        height: 70px;
-        .toutiao-lishi {
-          font-size: 22px;
-          color: #ff9b1d;
-        }
-        .toutiao-shoucang {
-          font-size: 22px;
-          color: #eb5253;
-        }
-        .van-grid-item__text {
-          font-size: 14px;
-          color: #333333;
-        }
+    .text {
+      font-size: 14px;
+      color: #fff;
+    }
+  }
+  /deep/ .nav-grid {
+    .nav-grid-item {
+      height: 70px;
+      .toutiao-lishi {
+        font-size: 22px;
+        color: #ff9b1d;
+      }
+      .toutiao-shoucang {
+        font-size: 22px;
+        color: #eb5253;
+      }
+      .van-grid-item__text {
+        font-size: 14px;
+        color: #333333;
       }
     }
   }
