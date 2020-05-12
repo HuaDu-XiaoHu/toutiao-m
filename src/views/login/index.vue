@@ -95,6 +95,8 @@ export default {
         const { data } = await login(this.user)
         // console.log(res)
         this.$toast.success('登录成功')
+        // 登录成功跳转到页面
+        this.$router.back()
         // 将后端返回的用户登录状态token放到vuex容器中
         this.$store.commit('setUser', data.data)
       } catch (err) {
