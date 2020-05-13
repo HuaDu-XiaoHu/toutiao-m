@@ -9,9 +9,12 @@
                 :finished="finished"
                 finished-text="没有更多了"
                 @load="onLoad">
-        <van-cell v-for="(article,index) in articles"
+        <article-item v-for="(article, index) in articles"
+                      :key="index"
+                      :article="article" />
+        <!-- <van-cell v-for="(article,index) in articles"
                   :key="index"
-                  :title="article.title" />
+                  :title="article.title" /> -->
       </van-list>
     </van-pull-refresh>
   </div>
@@ -19,9 +22,12 @@
 
 <script>
 import { getArticles } from '@/api/article'
+import ArticleItem from '@/components/article-item'
 export default {
   name: 'ArticleList',
-  components: {},
+  components: {
+    ArticleItem
+  },
   props: {
     channel: {
       type: Object,
@@ -84,6 +90,7 @@ export default {
       this.articles.unshift(...results)
       // 关闭刷新的loading状态
       this.isRefreshLoading = false
+      // 刷新之后提示消息
       this.refreshSuccessText = `更新了${results.length}条数据`
     }
   }

@@ -8,8 +8,10 @@
                   round
                   size="small">搜索</van-button>
     </van-nav-bar>
-    <van-tabs v-model="active">
-      <van-tab :title="channel.name"
+    <van-tabs class="channel-tabs"
+              v-model="active">
+      <van-tab class="tab-item"
+               :title="channel.name"
                v-for="channel in channels"
                :key="channel.id">
         <!-- 文章列表 -->
@@ -67,6 +69,18 @@ export default {
     }
     .van-button__text {
       font-size: 14px;
+    }
+  }
+  .channel-tabs {
+    /deep/ .van-tab {
+      border-bottom: 1px solid #edeff3;
+      border-right: 1px solid #edeff3;
+    }
+    /deep/ .van-tabs__line {
+      width: 15px !important;
+      height: 3px;
+      background-color: #3296fa;
+      bottom: 20px;
     }
   }
 }
