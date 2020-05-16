@@ -76,7 +76,7 @@ export default {
       }
     },
     async onRefresh () {
-      console.log(13)
+      // console.log(13)
       // 下拉刷新
       // 1.请求获取数据
       const { data } = await getArticles({

@@ -17,7 +17,22 @@
         <!-- 文章列表 -->
         <article-list :channel=channel />
       </van-tab>
+      <div slot="nav-right"
+           class="wap-nav-placeholder"></div>
+      <div slot="nav-right"
+           @click="isChannelEditShow=true"
+           class="warp-nav-warp">
+        <van-icon name="wap-nav"></van-icon>
+      </div>
     </van-tabs>
+    <!-- 弹出层 -->
+    <van-popup v-model="isChannelEditShow"
+               position="bottom"
+               class="channel-edit-popup"
+               closeable
+               close-icon-position="top-left"
+               get-container="body"
+               style="height:100%" />
   </div>
 
 </template>
@@ -34,7 +49,8 @@ export default {
   data () {
     return {
       active: 0,
-      channels: []
+      channels: [],
+      isChannelEditShow: false
     }
   },
   computed: {},
@@ -81,6 +97,38 @@ export default {
       height: 3px;
       background-color: #3296fa;
       bottom: 20px;
+    }
+  }
+  /deep/ .van-tabs__nav {
+    margin-right: 33px;
+  }
+  .wap-nav-placeholder {
+    width: 33px;
+    flex-shrink: 0;
+  }
+  .warp-nav-warp {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    right: 0;
+    height: 44px;
+    width: 33px;
+    background-color: #ffffff;
+    opacity: 0.9;
+    .van-icon {
+      font-size: 24px;
+    }
+    &:before {
+      content: "";
+      width: 1px;
+      height: 30px;
+      line-height: 30px;
+      background: url("./line.png") no-repeat;
+      background-size: contain;
+      position: absolute;
+      left: 0px;
+      top: 6px;
     }
   }
 }

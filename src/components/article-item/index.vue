@@ -1,17 +1,16 @@
 <template>
   <van-cell class="article-item">
     <div slot="title"
-         class="title">{{article.title}}</div>
+         class="title van-multi-ellipsis--l3">{{article.title}}</div>
     <div slot="label">
       <div class="cover-warp"
            v-if="article.cover.type===3">
-        <div class="cover-warp.item">
-          <van-image width="116"
-                     height="73"
+        <div class="cover-warp.item"
+             v-for="(img,index) in article.cover.images"
+             :key="index">
+          <van-image height="73"
                      fit="cover"
                      class="cover-image"
-                     v-for="(img,index) in article.cover.images"
-                     :key="index"
                      :src="img" />
         </div>
       </div>
@@ -25,7 +24,7 @@
                class="reight-cover"
                height="73"
                fit="cover"
-               :src="img" />
+               :src="article.cover.images[0]" />
   </van-cell>
 </template>
 
