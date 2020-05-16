@@ -2,23 +2,27 @@
   <div class="channel-edit">
     <van-cell center
               :border="false">
-      <div slot="title"> 我的频道</div>
+      <div slot="title"
+           class="channel-title"> 我的频道</div>
       <van-button type="danger"
                   plain
                   round
                   size="mini">编辑</van-button>
     </van-cell>
     <van-grid :gutter="10">
-      <van-grid-item v-for="value in 8"
+      <van-grid-item class="grit-item"
+                     v-for="value in 8"
                      :key="value"
                      text="文字" />
     </van-grid>
     <van-cell center
               :border="false">
-      <div slot="title">频道推荐</div>
+      <div slot="title"
+           class="channel-title">频道推荐</div>
     </van-cell>
     <van-grid :gutter="10">
-      <van-grid-item v-for="value in 8"
+      <van-grid-item class="grit-item"
+                     v-for="value in 8"
                      :key="value"
                      text="文字" />
     </van-grid>
@@ -45,5 +49,20 @@ export default {
 <style scoped lang="less">
 .channel-edit {
   padding-top: 55px;
+  .channel-title {
+    font-size: 16px;
+    color: #333;
+  }
+  .grit-item {
+    width: 80px;
+    height: 43px;
+    /deep/ .van-grid-item__content {
+      background-color: #f4f5f6;
+    }
+    .van-grid-item__text {
+      font-size: 14px;
+      color: #222;
+    }
+  }
 }
 </style>
