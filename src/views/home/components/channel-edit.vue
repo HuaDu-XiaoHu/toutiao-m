@@ -7,13 +7,16 @@
       <van-button type="danger"
                   plain
                   round
-                  size="mini">编辑</van-button>
+                  size="mini"
+                  @click="isEdit=!isEdit">{{isEdit ? '完成' : '编辑'}}</van-button>
     </van-cell>
     <van-grid :gutter="10">
       <van-grid-item class="grit-item"
-                     v-for="value in 8"
-                     :key="value"
-                     text="文字" />
+                     :icon="(isEdit && index !==0) ? 'clear' :''"
+                     v-for="(channel,index) in userChannel"
+                     :key="index"
+                     :text="channel.name"
+                     @click="onUserChannelClick(index)" />
     </van-grid>
     <van-cell center
               :border="false">
@@ -22,27 +25,73 @@
     </van-cell>
     <van-grid :gutter="10">
       <van-grid-item class="grit-item"
-                     v-for="value in 8"
-                     :key="value"
-                     text="文字" />
+                     v-for="(channel,index) in recommendChannels"
+                     :key="index"
+                     :text="channel.name"
+                     @click="onAdd(channel)" />
     </van-grid>
   </div>
 </template>
 
 <script>
+import { getAllChannels } from '@/api/channel'
 export default {
   name: 'ChannelEdit',
   components: {},
-  props: {},
-  data () {
-    return {
+  props: {
+    userChannel: {
+      type: Array,
+      required: true
     }
   },
-  computed: {},
+  data () {
+    return {
+      allChannels: [],
+      isEdit: false
+    }
+  },
+  computed: {
+    // 推荐的频道列表
+    // 计算属性
+    recommendChannels () {
+      return this.allChannels.filter(channel => {
+        // 判断是都属于我的频道里
+        return !this.userChannel.find(userChannel => {
+          return userChannel.id === channel.id
+        })
+      })
+    }
+  },
   watch: {},
-  created () { },
+  created () {
+    this.loadallChannels()
+  },
   mounted () { },
-  methods: {}
+  methods: {
+    async loadallChannels () {
+      const { data } = await getAllChannels()
+      this.allChannels = data.data.channels
+    },
+    onAdd (channel) {
+      this.userChannel.push(channel)
+    },
+    onUserChannelClick (index) {
+      // Edit为true编辑状态
+      // Edit为false删除状态
+      if (this.isEdit && index !== 0) {
+        this.deleteChannel(index)
+      } else {
+        this.swithChannel(index)
+      }
+    },
+    deleteChannel (index) {
+      console.log('删除')
+      this.userChannel.splice(index, 1)
+    },
+    swithChannel (index) {
+      console.log('编辑')
+    }
+  }
 }
 </script>
 
@@ -59,9 +108,19 @@ export default {
     /deep/ .van-grid-item__content {
       background-color: #f4f5f6;
     }
+    /deep/ .van-grid-item__icon {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 20px;
+      color: #cccccc;
+    }
     .van-grid-item__text {
       font-size: 14px;
       color: #222;
+    }
+    /deep/.van-grid-item__text {
+      margin-top: 0;
     }
   }
 }

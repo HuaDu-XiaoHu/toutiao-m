@@ -33,7 +33,7 @@
                close-icon-position="top-left"
                get-container="body"
                style="height:100%">
-      <channel-edit />
+      <channel-edit :user-channel="channels" />
     </van-popup>
   </div>
 
