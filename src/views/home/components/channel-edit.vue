@@ -12,11 +12,12 @@
     </van-cell>
     <van-grid :gutter="10">
       <van-grid-item class="grit-item"
+                     :class="{active: index===active}"
                      :icon="(isEdit && index !==0) ? 'clear' :''"
                      v-for="(channel,index) in userChannel"
                      :key="index"
                      :text="channel.name"
-                     @click="onUserChannelClick(index)" />
+                     @click="onUserChannelClick(channel,index)" />
     </van-grid>
     <van-cell center
               :border="false">
@@ -34,13 +35,23 @@
 </template>
 
 <script>
-import { getAllChannels } from '@/api/channel'
+import {
+  getAllChannels,
+  addUserChannel,
+  deleteUserChannel
+} from '@/api/channel'
+import { mapState } from 'vuex'
+import { setItem } from '@/utils/storage'
 export default {
   name: 'ChannelEdit',
   components: {},
   props: {
     userChannel: {
       type: Array,
+      required: true
+    },
+    active: {
+      type: Number,
       required: true
     }
   },
@@ -51,6 +62,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['user']),
     // 推荐的频道列表
     // 计算属性
     recommendChannels () {
@@ -72,24 +84,53 @@ export default {
       const { data } = await getAllChannels()
       this.allChannels = data.data.channels
     },
-    onAdd (channel) {
+    async onAdd (channel) {
       this.userChannel.push(channel)
+      // 数据持久化
+      // 登录，存到线上
+      if (this.user) {
+        await addUserChannel({
+          channels: [
+            { id: channel.id, seq: this.userChannel.length }
+          ]
+        })
+      } else {
+        // 没有登录，存到本地
+        setItem('user-channels', this.userChannel)
+      }
     },
-    onUserChannelClick (index) {
+    onUserChannelClick (channel, index) {
       // Edit为true编辑状态
       // Edit为false删除状态
       if (this.isEdit && index !== 0) {
-        this.deleteChannel(index)
+        // 编辑状态，删除频道
+        this.deleteChannel(channel, index)
       } else {
+        // 非编辑状态，切换频道
         this.swithChannel(index)
       }
     },
-    deleteChannel (index) {
-      console.log('删除')
+    async deleteChannel (channel, index) {
+      // console.log('删除')
+      if (index <= this.active) {
+        // 更新激活的频道索引
+        this.$emit('update-active', this.active - 1)
+      }
       this.userChannel.splice(index, 1)
+      // 删除数据持久化
+      if (this.user) {
+        // 登录，持久化到线上
+        await deleteUserChannel(channel.id)
+      } else {
+        // 没有登录，持久化到本地
+        setItem('user-channels', this.userChannel)
+      }
     },
     swithChannel (index) {
-      console.log('编辑')
+      // 切换频道
+      this.$emit('update-active', index)
+      //  关闭弹出层
+      this.$emit('close')
     }
   }
 }
@@ -121,6 +162,11 @@ export default {
     }
     /deep/.van-grid-item__text {
       margin-top: 0;
+    }
+  }
+  .active {
+    /deep/ .van-grid-item__text {
+      color: red !important;
     }
   }
 }

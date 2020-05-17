@@ -33,7 +33,10 @@
                close-icon-position="top-left"
                get-container="body"
                style="height:100%">
-      <channel-edit :user-channel="channels" />
+      <channel-edit :user-channel="channels"
+                    :active="active"
+                    @close="isChannelEditShow=false"
+                    @update-active="onUpdateAcitve" />
     </van-popup>
   </div>
 
@@ -43,6 +46,8 @@
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list'
 import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storage'
 export default {
   name: 'HomeIndex',
   components: {
@@ -57,7 +62,9 @@ export default {
       isChannelEditShow: true
     }
   },
-  computed: {},
+  computed: {
+    ...mapState(['user'])
+  },
   watch: {},
   created () {
     this.loadChannels()
@@ -65,9 +72,26 @@ export default {
   mounted () { },
   methods: {
     async loadChannels () {
-      const { data } = await getUserChannels()
-      // console.log(data)
-      this.channels = data.data.channels
+      let channels = []
+      // const { data } = await getUserChannels()
+      // // console.log(data)
+      // this.channels = data.data.channels
+      if (this.user) {
+        const { data } = await getUserChannels()
+        channels = data.data.channels
+      } else {
+        const loadChannels = getItem('user-channels')
+        if (loadChannels) {
+          channels = loadChannels
+        } else {
+          const { data } = await getUserChannels()
+          channels = data.data.channels
+        }
+      }
+      this.channels = channels
+    },
+    onUpdateAcitve (index) {
+      this.active = index
     }
   }
 }
