@@ -6,6 +6,7 @@
                   icon="search"
                   type="info"
                   round
+                  to="/search"
                   size="small">搜索</van-button>
     </van-nav-bar>
     <van-tabs class="channel-tabs"
@@ -59,7 +60,7 @@ export default {
     return {
       active: 0,
       channels: [],
-      isChannelEditShow: true
+      isChannelEditShow: false
     }
   },
   computed: {
