@@ -6,13 +6,16 @@
                   placeholder="请输入搜索关键词"
                   show-action
                   @search="onSearch"
-                  @cancel="onCancel" />
-      <!-- 联想建议 -->
-      <search-suggestion />
-      <!-- 历史记录 -->
-      <search-history />
+                  @cancel="$router.back()"
+                  @focus="isResultshow=false" />
       <!-- 搜索结果 -->
-      <search-result />
+      <search-result v-if="isResultshow" />
+      <!-- 联想建议 -->
+      <search-suggestion v-else-if="searchText"
+                         :search-text="searchText" />
+      <!-- 历史记录 -->
+      <search-history v-else />
+
     </form>
   </div>
 
@@ -32,7 +35,8 @@ export default {
   props: {},
   data () {
     return {
-      searchText: ''
+      searchText: '',
+      isResultshow: false
     }
   },
   computed: {},
@@ -42,11 +46,12 @@ export default {
   methods: {
     // 回车搜索
     onSearch () {
-    },
-    // 取消
-    onCancel () { }
+      // 展示搜索结果
+      this.isResultshow = true
+    }
   }
 }
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+</style>
