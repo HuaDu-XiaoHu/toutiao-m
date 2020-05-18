@@ -9,7 +9,8 @@
                   @cancel="$router.back()"
                   @focus="isResultshow=false" />
       <!-- 搜索结果 -->
-      <search-result v-if="isResultshow" />
+      <search-result v-if="isResultshow"
+                     :search-text="searchText" />
       <!-- 联想建议 -->
       <search-suggestion v-else-if="searchText"
                          :search-text="searchText" />
